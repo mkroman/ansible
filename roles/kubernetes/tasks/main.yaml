@@ -1,0 +1,18 @@
+- name: Set up containerd
+  include_tasks: containerd.yaml
+
+- name: Install kubelet, kubeadm and kubectl
+  apt:
+    pkg:
+    - kubelet={{ kubernetes_version }}-00
+    - kubeadm={{ kubernetes_version }}-00
+    - kubectl={{ kubernetes_version }}-00
+
+- name: Hold kubelet, kubeadm and kubectl version
+  dpkg_selections:
+    name: '{{ item }}'
+    selection: hold
+  with_items:
+  - kubelet
+  - kubeadm
+  - kubectl

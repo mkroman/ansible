@@ -1,0 +1,34 @@
+- name: Install containerd
+  apt:
+    name: containerd.io
+    state: present
+
+- name: Check the containerd configuration
+  shell: grep -c "\[plugins.\"io.containerd.grpc.v1.cri\".containerd.runtimes.runc.options\]" /etc/containerd/config.toml || echo "0"
+  register: containerd_conf
+
+- name: Reset the containerd configuration
+  shell: containerd config default | sudo tee /etc/containerd/config.toml
+  when: containerd_conf.stdout == "0" 
+  register: containerd_conf_reset
+
+- name: Set the containerd cgroup runtime to systemd
+  ansible.builtin.lineinfile:
+    path: /etc/containerd/config.toml
+    search_string: "SystemdCgroup = true"
+    insertafter: "\\[plugins.\"io.containerd.grpc.v1.cri\".containerd.runtimes.runc.options\\]"
+    line: "            SystemdCgroup = true"
+    state: present
+  register: containerd_insert
+
+- name: Reload containerd if necessary
+  ansible.builtin.systemd:
+    name: containerd
+    state: restarted
+  when: containerd_insert.changed or containerd_conf_reset.changed
+
+- name: Start and enable containerd
+  ansible.builtin.systemd:
+    name: containerd
+    state: started
+    enabled: yes

@@ -1,0 +1,10 @@
+---
+- hosts: cluster
+  become: yes
+  roles:
+  - common
+
+- hosts: cluster
+  become: yes
+  roles:
+  - kubernetes
