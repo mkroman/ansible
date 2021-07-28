@@ -60,3 +60,12 @@
   - { name: 'net.bridge.bridge-nf-call-iptables', value: '1' }
   - { name: 'net.bridge.bridge-nf-call-ip6tables', value: '1' }
   - { name: 'net.ipv4.ip_forward', value: '1' }
+
+- name: Turn off any active swap space
+  shell: swapoff -a
+
+- name: Remove swap fstab entry
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'
