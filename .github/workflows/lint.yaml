@@ -1,0 +1,16 @@
+name: Continuous Linting
+
+on: [push, pull_request]
+
+jobs:
+  anisble:
+    name: Run ansible linting
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - uses: ansible/ansible-lint-action@c37fb7b4bda2c8cb18f4942716bae9f11b0dc9bc
+      with:
+        targets: 'site.yaml'
