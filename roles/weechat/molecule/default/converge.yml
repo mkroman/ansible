@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+  - name: 'Include mkroman.weechat'
+    include_role:
+      name: 'mkroman.weechat'
+    vars:
+      weechat_version: '3.6'

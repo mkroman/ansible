@@ -1,0 +1,4 @@
+---
+- name: Set up weechat for Debian-based systems
+  ansible.builtin.include_tasks: setup-debian.yaml
+  when: ansible_os_family == 'Debian'

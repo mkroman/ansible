@@ -1,0 +1,9 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: Assert that the correct weechat version is installed
+    ansible.builtin.command: weechat --version
+    register: weechat
+    failed_when: not weechat.stdout is version('3.6', '==')

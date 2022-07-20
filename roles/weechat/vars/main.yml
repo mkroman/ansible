@@ -1,0 +1,8 @@
+---
+# Toggle whether to install the weechat package.
+weechat_install: true
+# The version of weechat to install.
+weechat_version: '3.6'
+
+# The complete version filter for the apt package to select.
+weechat_apt_package_version: '{{ weechat_version }}*'

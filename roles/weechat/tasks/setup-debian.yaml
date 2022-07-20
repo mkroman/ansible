@@ -1,0 +1,35 @@
+- name: Install package key signature validation packages
+  ansible.builtin.apt:
+    name:
+    - ca-certificates
+    - dirmngr
+    - gpg-agent
+    - apt-transport-https
+    cache_valid_time: 86400
+    state: present
+  tags:
+  - weechat
+
+- name: Add the weechat package signing key
+  ansible.builtin.apt_key:
+    id: '11E9DE8848F2B65222AA75B8D1820DB22A11534E'
+    url: https://weechat.org/dev/info/debian_repository_signing_key/
+    keyring: /etc/apt/trusted.gpg.d/weechat.gpg
+    state: present
+  tags:
+  - weechat
+
+- name: Add the weechat apt repository
+  ansible.builtin.apt_repository:
+    repo: deb [signed-by=/etc/apt/trusted.gpg.d/weechat.gpg] https://weechat.org/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} main
+    state: present
+  tags:
+  - weechat
+
+- name: Install weechat package
+  ansible.builtin.apt:
+    name: weechat={{ weechat_apt_package_version }}
+    cache_valid_time: 86400
+    state: present
+  tags:
+  - weechat
