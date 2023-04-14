@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+  - name: "Include mkroman.hardened"
+    ansible.builtin.include_role:
+      name: "mkroman.hardened"

@@ -1,0 +1,11 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: Gather the package facts
+    ansible.builtin.package_facts:
+      manager: auto
+  - name: Assert that the package is installed
+    ansible.builtin.assert:
+      that: "'unattended-upgrades' in ansible_facts.packages"

@@ -3,6 +3,7 @@
   hosts: m6
   become: yes
   roles:
+  - hardened
   - common
   - kubernetes-common
   - kubernetes

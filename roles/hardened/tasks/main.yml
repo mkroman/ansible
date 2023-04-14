@@ -1,0 +1,7 @@
+---
+- name: Set up {{ ansible_distribution }}
+  ansible.builtin.include_tasks:
+    file: '{{ item }}'
+  with_first_found:
+  - files:
+    - tasks/setup-{{ ansible_distribution | lower }}.yaml
