@@ -1,0 +1,70 @@
+---
+- name: Install dependencies
+  when: ansible_os_family == 'Debian'
+  apt:
+    pkg:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg
+
+- name: Install Docker signing key
+  apt_key:
+    id: '9DC858229FC7DD38854AE2D88D81803C0EBFCD88'
+    url: https://download.docker.com/linux/debian/gpg
+
+- name: Add docker repository (Debian Buster)
+  apt_repository:
+    repo: deb [arch=amd64] http://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
+    filename: docker-ce
+  when: ansible_distribution == 'Debian'
+
+- name: Install Google Cloud signing key
+  apt_key:
+    id: 'A362B822F6DEDC652817EA46B53DC80D13EDEF05'
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: Add Kubernetes repository (Debian)
+  apt_repository:
+    repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+    filename: kubernetes
+  when: ansible_distribution == 'Debian'
+
+- name: Load br_filter and overlay kernel modules
+  community.general.modprobe:
+    name: '{{ item }}'
+  with_list:
+  - br_netfilter
+  - overlay
+
+- name: Automatically load br_netfilter and overlay modules on boot
+  ansible.builtin.lineinfile:
+    path: /etc/modules-load.d/k8s.conf
+    create: true
+    mode: 0644
+    line: '{{ item }}'
+    state: present
+  with_list:
+  - br_netfilter
+  - overlay
+
+- name: Set sysctl variables
+  ansible.posix.sysctl:
+    name: '{{ item.name }}'
+    value: '{{ item.value }}'
+    state: present
+    sysctl_file: /etc/sysctl.d/99-kubernetes-cri.conf
+  with_items:
+  - { name: 'net.bridge.bridge-nf-call-iptables', value: '1' }
+  - { name: 'net.bridge.bridge-nf-call-ip6tables', value: '1' }
+  - { name: 'net.ipv4.ip_forward', value: '1' }
+
+- name: Turn off any active swap space
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: Remove swap fstab entry
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'

@@ -1,0 +1,8 @@
+---
+# The kubernetes version
+kubernetes_version: 1.23.1
+
+service_cidr: 10.96.0.0/12
+pod_network_cidr: 10.244.0.0/16
+
+master_ip: "{{ hostvars[groups['master'][0]]['ansible_default_ipv4'].address | default(groups['master'][0]) }}"

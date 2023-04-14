@@ -1,0 +1,6 @@
+---
+- name: Restart containerd
+  ansible.builtin.systemd:
+    name: containerd
+    state: restarted
+  when: containerd_insert.changed or containerd_conf_reset.changed

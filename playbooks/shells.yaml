@@ -1,0 +1,5 @@
+- name: Set up shell instances
+  hosts: shells
+  roles:
+  - common
+  - weechat

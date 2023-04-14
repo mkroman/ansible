@@ -1,0 +1,8 @@
+---
+- name: Prepare Kubernetes nodes
+  hosts: m6
+  become: yes
+  roles:
+  - common
+  - kubernetes-common
+  - kubernetes
